@@ -1,0 +1,35 @@
+schema: workflow/2022.04
+name: Daily Meeting Insights with LinkedIn Research
+triggers:
+- id: ti_A6T899y
+steps:
+- namespace: get_todays_events
+  runtime: nodejs20.x
+  uses: "./get_todays_events/actions/list-events/list-events.mjs"
+  props:
+    googleCalendar:
+      authProvisionId: apn_5dhKx1W
+    calendarId: jaguilar@getdynasty.com
+    maxResults:
+    orderBy:
+    singleEvents: true
+    timeMax: "{{ steps.trigger.event.timezone_configured.iso8601.date }}T23:59:59{{
+      steps.trigger.event.timezone_configured.timezone === 'UTC' ? 'Z' : steps.trigger.event.timezone_configured.timezone
+      }}"
+    timeMin: "{{ steps.trigger.event.timezone_configured.iso8601.date }}T00:00:00{{
+      steps.trigger.event.timezone_configured.timezone === 'UTC' ? 'Z' : steps.trigger.event.timezone_configured.timezone
+      }}"
+    eventTypes:
+- namespace: research_attendees
+  runtime: nodejs20.x
+  uses: "./research_attendees/entry.js"
+  props:
+    max: 10
+- namespace: send_meeting_report
+  runtime: nodejs20.x
+  uses: "./send_meeting_report/actions/send-message-to-channel/send-message-to-channel.mjs"
+  props:
+    thread_broadcast: false
+    unfurl_links: false
+    unfurl_media: false
+

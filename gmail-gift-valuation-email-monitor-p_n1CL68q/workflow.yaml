@@ -1,0 +1,73 @@
+schema: workflow/2022.04
+name: Gmail Gift Valuation Email Monitor
+triggers:
+- id: ti_m1TXQmL
+steps:
+- namespace: read_contacts
+  runtime: nodejs20.x
+  uses: "./read_contacts/actions/get-values-in-range/get-values-in-range.mjs"
+  props:
+    googleSheets:
+      authProvisionId: apn_YDhyKWl
+    drive: My Drive
+    sheetId:
+      __lv:
+        label: QSBS pipedream users
+        value: 1fNS6lhqIo5PW_30OXdLft1zvwApwA5D2j0Qc5-hRSXI
+    worksheetId:
+      __lv:
+        label: Sheet1
+        value: '0'
+    range: A:B
+- namespace: search_emails
+  runtime: nodejs20.x
+  uses: "./search_emails/entry.js"
+  props:
+    gmail:
+      authProvisionId: apn_arhpnm0
+    contacts: "{{ steps.read_contacts.$return_value.map(row => row[1]).filter(email
+      => email && email.includes('@')) }}"
+- namespace: get_email_threads
+  runtime: nodejs20.x
+  uses: "./get_email_threads/entry.js"
+  props:
+    gmail:
+      authProvisionId: apn_arhpnm0
+    search_results: "{{ steps.search_emails.$return_value }}"
+- namespace: analyze_gift_valuations
+  runtime: nodejs20.x
+  uses: openai-passthrough-chat@0.0.2
+  props:
+    app:
+    modelId: gpt-4.1
+    userMessage: "Please analyze the following email threads to determine if they
+      contain discussions about gift valuations. I will provide thread summaries with
+      key information:\n\nThreads found: {{ steps.get_email_threads.$return_value.threadCount
+      }}\n\nFor each thread, I need you to determine if the conversation is related
+      to gift valuations based on the subject lines and message snippets.\n\nThread
+      data: {{ JSON.stringify(steps.get_email_threads.$return_value.threads.slice(0,
+      5).map(thread => ({ id: thread.id, subject: thread.messages[0]?.payload?.headers?.find(h
+      => h.name === 'Subject')?.value || 'No Subject', messageCount: thread.messages.length,
+      snippets: thread.messages.slice(0, 3).map(msg => msg.snippet).join(' | ') })),
+      null, 2) }}\n\nFor each thread, please provide:\n1. Thread ID\n2. Subject line\n3.
+      Whether it's about gift valuations (Yes/No)\n4. Direct quotes from the messages
+      \n\nNote: Only analyzing first 5 threads to stay within token limits."
+    systemInstructions: |-
+      "You are an expert email content analyzer. Your task is to analyze email threads and determine if they contain discussions about gift valuations. Gift valuations typically involve:
+
+      - Appraisals of gifts for tax purposes
+      - Charitable donation valuations
+      - Estate planning gift valuations
+      - Fair market value assessments of gifts
+      - IRS gift tax considerations
+      - Valuation of non-cash gifts
+      - Gift and estate tax planning
+
+      Analyze the provided email threads and for each thread, determine if the conversation is related to gift valuations. Provide a clear assessment with reasoning."
+    temperature: '1'
+    maxTokens: 4000
+    topP: '1'
+    frequencyPenalty: '0'
+    presencePenalty: '0'
+    responseFormat: text
+
