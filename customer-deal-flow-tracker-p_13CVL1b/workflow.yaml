@@ -26,18 +26,15 @@ steps:
   props:
     emailThreads: "{{steps.search_email_threads.$return_value}}"
     model: gpt-4o
-- namespace: send_slack_notification
+- namespace: slack
   runtime: nodejs20.x
-  uses: slack-send-message-to-channel@0.0.4
-  _props_cursor: dyp_aKUoLX1
+  uses: "./slack/entry.js"
   props:
     slack:
       authProvisionId: apn_kVhoygA
-    conversation:
+    channel:
       __lv:
         label: 'Public channel: sales-briefer-ai'
         value: C09AFE3BQ0J
-    thread_broadcast: false
-    unfurl_links: false
-    unfurl_media: false
+    analysisResults: "{{ steps.analyze_contact_status.$return_value }}"
 
