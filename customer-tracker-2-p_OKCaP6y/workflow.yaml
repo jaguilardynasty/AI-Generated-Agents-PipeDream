@@ -1,0 +1,5 @@
+schema: workflow/2022.04
+name: Customer-tracker-2
+settings:
+  error_notification: true
+

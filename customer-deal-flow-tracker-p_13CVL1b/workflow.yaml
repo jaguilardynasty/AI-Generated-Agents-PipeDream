@@ -4,6 +4,8 @@ settings:
   error_notification: true
   lambda_memory: 512
   lambda_timeout: 750
+triggers:
+- id: ti_j9TVbYB
 steps:
 - namespace: get_hubspot_contacts
   runtime: nodejs20.x
@@ -26,18 +28,13 @@ steps:
   props:
     emailThreads: "{{steps.search_email_threads.$return_value}}"
     model: gpt-4o
-- namespace: send_slack_notification
+- namespace: hubspot
   runtime: nodejs20.x
-  uses: slack-send-message-to-channel@0.0.4
-  _props_cursor: dyp_aKUoLX1
+  uses: "./hubspot/entry.js"
   props:
-    slack:
-      authProvisionId: apn_kVhoygA
-    conversation:
-      __lv:
-        label: 'Public channel: sales-briefer-ai'
-        value: C09AFE3BQ0J
-    thread_broadcast: false
-    unfurl_links: false
-    unfurl_media: false
+    hubspot:
+      authProvisionId: apn_b6hVBB6
+    contactsInput: "{{steps.analyze_contact_status.$return_value.contacts}}"
+    statusPropertyLabel: Email Status
+    onlyUpdateOpenDeals: false
 

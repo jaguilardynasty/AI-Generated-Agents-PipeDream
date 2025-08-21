@@ -17,6 +17,7 @@ export default defineComponent({
       options: [
         "gpt-4o",
         "gpt-4o-mini", 
+        "o3",
       ],
       default: "gpt-4o"
     }
@@ -46,8 +47,8 @@ For the date/time, look for the most recent timestamp when there was meaningful 
 Status definitions:
 - "said they would sign up or pay now": Contact explicitly indicated immediate readiness to purchase or sign up
 - "said they would sign up or pay at a later date": Contact expressed intent to purchase/sign up but specified a future timeframe
-- "said they were interested": Contact showed interest but hasn't committed to a specific timeline
-- "not interested or doubtful": Contact seems doubtful as to wether they want to do this, or stated that they do not want to move forward.
+- "said they were interested": Contact showed interest but hasn't said they would sign up yet.
+- "not interested or doubtful": Contact seems doubtful as to wether they want to do this.
 - "no messages found": No messages found for the contact
 
 These statuses returned should be the most recent status update of the user.
