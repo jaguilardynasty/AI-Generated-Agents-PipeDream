@@ -2,7 +2,7 @@ schema: workflow/2022.04
 name: Customer Deal Flow Tracker
 settings:
   error_notification: true
-  lambda_memory: 512
+  lambda_memory: 5376
   lambda_timeout: 750
 triggers:
 - id: ti_j9TVbYB
@@ -22,12 +22,19 @@ steps:
     gmail:
       authProvisionId: apn_vMhjLBk
     emailAddresses: "{{steps.get_hubspot_contacts.$return_value.emails}}"
+    includeTestEmail: false
+    searchDays: 120
+    maxThreadsPerEmail: 50
+    maxPagesPerEmail: 3
+    concurrency: 5
 - namespace: analyze_contact_status
   runtime: nodejs20.x
   uses: "./analyze_contact_status/entry.js"
   props:
-    emailThreads: "{{steps.search_email_threads.$return_value}}"
+    emailThreads: "{{steps.search_email_threads.$return_value.resultsByEmail}}"
     model: gpt-4o
+    maxMessagesPerThread: 30
+    maxCharsPerThread: 12000
 - namespace: hubspot
   runtime: nodejs20.x
   uses: "./hubspot/entry.js"
