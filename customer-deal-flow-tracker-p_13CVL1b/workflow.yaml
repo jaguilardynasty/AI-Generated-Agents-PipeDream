@@ -2,7 +2,7 @@ schema: workflow/2022.04
 name: Customer Deal Flow Tracker
 settings:
   error_notification: true
-  lambda_memory: 5376
+  lambda_memory: 2048
   lambda_timeout: 750
 triggers:
 - id: ti_j9TVbYB
