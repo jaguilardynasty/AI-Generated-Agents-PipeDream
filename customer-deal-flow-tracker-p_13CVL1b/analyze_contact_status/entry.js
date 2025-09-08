@@ -38,16 +38,16 @@ export default defineComponent({
 CRITICAL: Respond with VALID JSON ONLY. No prose, no code fences.
 
 Pick exactly one "status":
-- "said they would sign up or pay now"
-- "said they would sign up or pay at a later date"
-- "said they were interested"
+- "sign up or pay now"
+- "sign up or pay at a later date"
+- "interested"
 - "not interested or doubtful"
 - "no messages found"
 
 Status definitions:
-- "said they would sign up or pay now": Contact explicitly indicated immediate readiness to purchase or sign up 
-- "said they would sign up or pay at a later date": Contact expressed intent to purchase/sign up but specified a future timeframe 
-- "said they were interested": Contact showed interest but hasn't said they would sign up yet.
+- "sign up or pay now": Contact explicitly indicated immediate readiness to purchase or sign up 
+- "sign up or pay at a later date": Contact expressed intent to purchase/sign up but specified a future timeframe 
+- "interested": Contact showed interest but hasn't said they would sign up yet.
 - "not interested or doubtful": Contact seems doubtful as to wether they want to do this.
 - "no messages found": No messages found for the contact
 
@@ -142,9 +142,9 @@ Return EXACTLY:
     };
 
     const validStatuses = new Set([
-      "said they would sign up or pay now",
-      "said they would sign up or pay at a later date",
-      "said they were interested",
+      "sign up or pay now",
+      "sign up or pay at a later date",
+      "interested",
       "not interested or doubtful",
       "no messages found",
     ]);
@@ -250,10 +250,10 @@ Return EXACTLY:
       contacts: results,       // list
       byEmail,                 // map
       statusBreakdown: {
-        signUpNow: results.filter(r => r.status === "said they would sign up or pay now").length,
-        signUpLater: results.filter(r => r.status === "said they would sign up or pay at a later date").length,
+        signUpNow: results.filter(r => r.status === "sign up or pay now").length,
+        signUpLater: results.filter(r => r.status === "sign up or pay at a later date").length,
         interested: results.filter(r => r.status === "said they were interested").length,
-        notInterested: results.filter(r => r.status === "not interested or doubtful").length,
+        notInterested: results.filter(r => r.status === "interested").length,
         noMessages: results.filter(r => r.status === "no messages found").length,
       },
       totals: {
