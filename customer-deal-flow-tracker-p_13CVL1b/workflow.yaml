@@ -4,8 +4,6 @@ settings:
   error_notification: true
   lambda_memory: 2048
   lambda_timeout: 750
-triggers:
-- id: ti_j9TVbYB
 steps:
 - namespace: get_hubspot_contacts
   runtime: nodejs20.x
@@ -14,7 +12,6 @@ steps:
     hubspot:
       authProvisionId: apn_b6hVBB6
     listId: '11'
-    limit: 200
 - namespace: search_email_threads
   runtime: nodejs20.x
   uses: "./search_email_threads/entry.js"
@@ -31,6 +28,8 @@ steps:
   runtime: nodejs20.x
   uses: "./analyze_contact_status/entry.js"
   props:
+    openai:
+      authProvisionId: apn_JjhyPbJ
     emailThreads: "{{steps.search_email_threads.$return_value.resultsByEmail}}"
     model: gpt-4o
     maxMessagesPerThread: 30
