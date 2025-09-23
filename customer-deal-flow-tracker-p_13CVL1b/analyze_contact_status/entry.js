@@ -56,7 +56,7 @@ Pick exactly one "status":
 - "no messages found"
 
 Status definitions:
-- "sign up or pay now": Contact explicitly indicated immediate readiness to purchase or sign up 
+- "sign up or pay now": Contact explicitly indicated immediate readiness to purchase or sign up .
 - "sign up or pay at a later date": Contact expressed intent to purchase/sign up but specified a future timeframe 
 - "interested": Contact showed interest but hasn't said they would sign up yet.
 - "not interested or doubtful": Contact seems doubtful as to wether they want to do this.
@@ -64,15 +64,17 @@ Status definitions:
 
 Rules:
 - Use ONLY the other party's messages (exclude anything from *@getdynasty.com) for evidence/reasoning. Provide exact quotes from the messages.
+YOU MUST ENSURE THAT YOU ARE ONLY LOOKING AT THE USER'S MESSAGES, NOT MESSAGES FROM ALESSANDRO, OR ALESSANDRO@GETDYNASTY.COM. BOOKING A MEETING 
+IS NOT INDICATION THAT THEY WANT TO SIGN UP NOW. BE VERY MITICULOUS IN FIGURING OUT THE INTENTION OF THE USER, DO NOT MISSLABEL THEM.
 - "lastCheckinDate": most recent meaningful interaction timestamp (YYYY-MM-DD HH:MM:SS) or null.
 - "confidence": "high" | "medium" | "low".
 
 Return EXACTLY:
 {
+  "evidence": "string",
+  "confidence": "high" | "medium" | "low",
   "status": "...",
   "lastCheckinDate": "YYYY-MM-DD HH:MM:SS or null",
-  "evidence": "string",
-  "confidence": "high" | "medium" | "low"
 }
 `;
 

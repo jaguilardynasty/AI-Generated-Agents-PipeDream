@@ -2,8 +2,8 @@ import { axios } from "@pipedream/platform"
 import hubspot from "@pipedream/hubspot"
 
 export default defineComponent({
-  name: "Get Most-Recent 100 Emails from HubSpot Contact List",
-  description: "Fetch the 100 most recently added contact emails from a HubSpot list and return the same structure as the original code.",
+  name: "Get Paginated Contacts from HubSpot List",
+  description: "Fetch contacts from a HubSpot list with offset + limit, so you can pull different ranges (1–50, 51–100, etc.).",
   type: "action",
   props: {
     hubspot,
@@ -12,13 +12,24 @@ export default defineComponent({
       label: "HubSpot List ID",
       description: "The numeric ID of the HubSpot contact list.",
     },
+    offset: {
+      type: "integer",
+      label: "Offset",
+      description: "Where to start (e.g. 0 for first record, 50 for the 51st).",
+      default: 0,
+    },
+    limit: {
+      type: "integer",
+      label: "Limit",
+      description: "How many records to fetch (max 100 per request).",
+      default: 50,
+    },
   },
   async run({ $ }) {
-    const listId = this.listId;
+    const { listId, offset, limit } = this;
     const allContacts = [];
     const emails = new Set();
 
-    // Hit the 'recent' endpoint (newest-first) and ask for 100
     const url = `https://api.hubapi.com/contacts/v1/lists/${encodeURIComponent(listId)}/contacts/all`;
     const token = this.hubspot.$auth.oauth_access_token;
 
@@ -31,19 +42,20 @@ export default defineComponent({
           Accept: "application/json",
         },
         params: {
-          count: 150,
+          count: limit,
+          vidOffset: offset, // pagination start
           property: ["email", "firstname", "lastname", "company"],
           propertyMode: "value_only",
         },
       });
     } catch (error) {
-      console.error("Error fetching recent contacts:", error);
+      console.error("Error fetching contacts:", error);
       console.error("Error details:", error.response?.data || error.message);
-      throw new Error(`Failed to fetch recent contacts from list ${listId}: ${error.message}`);
+      throw new Error(`Failed to fetch contacts from list ${listId}: ${error.message}`);
     }
 
     const contacts = Array.isArray(response?.contacts) ? response.contacts : [];
-    console.log(`Processing ${contacts.length} recent contacts (newest first)`);
+    console.log(`Processing ${contacts.length} contacts starting at offset ${offset}`);
 
     const getProperty = (contact, propName) => {
       if (contact?.properties?.[propName]?.value != null) return contact.properties[propName].value;
@@ -57,7 +69,6 @@ export default defineComponent({
     };
 
     for (const contact of contacts) {
-      // Robust email extraction across legacy shapes
       let email =
         contact?.properties?.email?.value ??
         contact?.properties?.email ??
@@ -85,16 +96,17 @@ export default defineComponent({
 
     $.export(
       "$summary",
-      `Successfully fetched ${allContacts.length} recent contacts • unique emails: ${emails.size} • list ${listId}`
+      `Fetched ${allContacts.length} contacts (offset ${offset}, limit ${limit}) • unique emails: ${emails.size} • list ${listId}`
     );
 
-    // ⬇️ Return the EXACT SAME SHAPE as your original code
     return {
       listId,
+      offset,
+      limit,
       totalContacts: allContacts.length,
       uniqueEmailsCount: emails.size,
-      emails: [...emails],            // array of email strings
-      contacts: allContacts,          // normalized contact records
+      emails: [...emails],
+      contacts: allContacts,
     };
   },
 });

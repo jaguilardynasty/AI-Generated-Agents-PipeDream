@@ -12,6 +12,8 @@ steps:
     hubspot:
       authProvisionId: apn_b6hVBB6
     listId: '11'
+    offset: 0
+    limit: 100
 - namespace: search_email_threads
   runtime: nodejs20.x
   uses: "./search_email_threads/entry.js"
@@ -32,8 +34,27 @@ steps:
       authProvisionId: apn_JjhyPbJ
     emailThreads: "{{steps.search_email_threads.$return_value.resultsByEmail}}"
     model: gpt-4o
-    maxMessagesPerThread: 30
-    maxCharsPerThread: 12000
+    maxMessagesPerThread: 15
+    maxCharsPerThread: 10000
+- namespace: REminder_Tracker
+  runtime: nodejs20.x
+  uses: "./REminder_Tracker/entry.js"
+  props:
+    openai:
+      authProvisionId: apn_JjhyPbJ
+    emailThreads: "{{steps.search_email_threads.$return_value.resultsByEmail}}"
+    model: gpt-4o
+    maxMessagesPerThread: 15
+    maxCharsPerThread: 10000
+- namespace: hubspot1
+  runtime: nodejs20.x
+  uses: "./hubspot1/entry.js"
+  props:
+    hubspot:
+      authProvisionId: apn_b6hVBB6
+    contactsInput: "{{steps.REminder_Tracker.$return_value.contacts}}"
+    followUpDateProperty: follow_up_date
+    followUpMessageProperty: follow_up_message
 - namespace: hubspot
   runtime: nodejs20.x
   uses: "./hubspot/entry.js"
