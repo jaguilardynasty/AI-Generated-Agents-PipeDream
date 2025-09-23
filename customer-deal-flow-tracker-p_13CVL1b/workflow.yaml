@@ -4,6 +4,8 @@ settings:
   error_notification: true
   lambda_memory: 2048
   lambda_timeout: 750
+triggers:
+- id: hi_eqHNdXG
 steps:
 - namespace: get_hubspot_contacts
   runtime: nodejs20.x
