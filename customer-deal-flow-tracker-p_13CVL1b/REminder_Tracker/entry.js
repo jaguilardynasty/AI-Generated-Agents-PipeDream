@@ -43,14 +43,20 @@ export default defineComponent({
       apiKey: this.openai.$auth.api_key,
     });
 
-    const SYSTEM = `You analyze email conversations to find when the CONTACT (not anyone at GetDynasty) asked for a follow-up, or said that they would check back in.
-    You are only grabbing the most recent evidence of this.
+    const SYSTEM = `You analyze email conversations to find when the CONTACT (not anyone at GetDynasty) asked for a follow-up, or said that they would check back in, or said that they would be ready to signup or get started at a later time.
+    You are only grabbing the most recent evidence of this. 
 
 CRITICAL:
 - Respond with VALID JSON ONLY. No prose, no code fences.
 - Consider ONLY messages from the other party (exclude *@getdynasty.com).
 - ALSO EXCLUDE any message from senders containing "alessandro" (case-insensitive), including alessandro@getdynasty.com.
 - Extract exact quotes where the contact indicates they want a follow-up later.
+
+WHAT YOU ARE LOOKING FOR:
+- when users said they would follow up at a later day
+- when users asks to be followed up with at a later day
+- when users say they will sign up or pay at a later date
+- when users say they are waiting on some event to to move forward
 
 For each qualifying message:
 - "messageDate": timestamp of the message (YYYY-MM-DD HH:MM:SS).

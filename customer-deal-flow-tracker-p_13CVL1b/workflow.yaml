@@ -48,9 +48,9 @@ steps:
     model: gpt-4o
     maxMessagesPerThread: 15
     maxCharsPerThread: 10000
-- namespace: hubspot1
+- namespace: update_reminders
   runtime: nodejs20.x
-  uses: "./hubspot1/entry.js"
+  uses: "./update_reminders/entry.js"
   props:
     hubspot:
       authProvisionId: apn_b6hVBB6
