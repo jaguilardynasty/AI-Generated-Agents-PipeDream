@@ -1,0 +1,45 @@
+schema: workflow/2022.04
+name: Grab Partial Submissions and Book A Call Drop-Offs
+settings:
+  error_notification: true
+steps:
+- namespace: tally
+  runtime: nodejs20.x
+  uses: "./tally/entry.js"
+  props:
+    tally:
+      authProvisionId: apn_dbhdW5M
+    formId: wAO5j0
+    nameKey: question_OXXjxk
+    emailKey: question_GppoOQ
+    phoneKey: question_VPP9WN
+    maxPages: 10
+- namespace: code
+  runtime: nodejs20.x
+  uses: "./code/entry.js"
+  props:
+    google_sheets:
+      authProvisionId: apn_YDhyKWl
+    hubspot:
+      authProvisionId: apn_b6hVBB6
+    spreadsheetId: 1VssNP0nlnyRug5aZUAgA0ovLaTBNl6gWdfwYRSF9ELU
+    sheetName: Sheet1
+    emailColumn: B
+    notFoundTabName: Has not booked a call
+    writeHeaderIfNew: true
+    valueInputOption: RAW
+- namespace: code1
+  runtime: nodejs20.x
+  uses: "./code1/entry.js"
+  props:
+    google_sheets:
+      authProvisionId: apn_YDhyKWl
+    hubspot:
+      authProvisionId: apn_b6hVBB6
+    valuesPath: steps.tally.$return_value.values
+    altValuesPaths: []
+    createMode: existing
+    spreadsheetId: 1ueVHfcYFymQbI7Wce4U8C3nP_uUmze34BpxNZL_YGx8
+    sheetTitle: Partial submissions not booked meeting
+    valueInputOption: USER_ENTERED
+
