@@ -2,6 +2,8 @@ schema: workflow/2022.04
 name: Grab Partial Submissions and Book A Call Drop-Offs
 settings:
   error_notification: true
+triggers:
+- id: ti_j9TPVrv
 steps:
 - namespace: tally
   runtime: nodejs20.x
