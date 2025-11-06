@@ -1,0 +1,6 @@
+schema: workflow/2022.04
+name: Untitled Workflow - 11/5/2025, 8:03 PM
+settings:
+  error_notification: true
+  lambda_timeout: 491
+
